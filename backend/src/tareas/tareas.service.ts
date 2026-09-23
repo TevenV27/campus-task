@@ -6,8 +6,8 @@ export class TareasService {
   listar(): Tarea[] {
     return [
       { id: 1, titulo: 'Leer la guía de la clase 2' },
-      { id: 2, titulo: 'Preparar el entorno de desarrollo' }
-      { id: 3, titulo: 'hacer algo xd'},
+      { id: 2, titulo: 'Preparar el entorno de desarrollo' },
+      { id: 3, titulo: 'hacer algo xd'}
     ];
   }
 }
