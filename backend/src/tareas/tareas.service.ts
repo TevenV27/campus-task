@@ -7,6 +7,14 @@ export class TareasService {
     return [
       { id: 1, titulo: 'Leer la guía de la clase 2' },
       { id: 2, titulo: 'Preparar el entorno de desarrollo' },
+      { id: 3, titulo: 'Crear el proyecto de NestJS' },
+      { id: 4, titulo: 'Instalar dependencias necesarias' },
+      { id: 5, titulo: 'Configurar TypeScript y ESLint' },
+      { id: 6, titulo: 'Implementar la estructura de carpetas' },
+      { id: 7, titulo: 'Crear el módulo de tareas' },
+      { id: 8, titulo: 'Definir el modelo de datos de tareas' },
+      { id: 9, titulo: 'Implementar el servicio de tareas' },
+      { id: 10, titulo: 'Crear el controlador de tareas' },
     ];
   }
 }
