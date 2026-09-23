@@ -17,6 +17,16 @@ export class TareasService {
       { id: 10, titulo: 'Definir el modelo de datos de tareas' },
       { id: 11, titulo: 'Implementar el servicio de tareas' },
       { id: 12, titulo: 'Crear el controlador de tareas' },
+      { id: 13, titulo: 'Realizar una práctica corta de acercamiento' },
+      { id: 14, titulo: 'Crear el proyecto de NestJS' },
+      { id: 15, titulo: 'Instalar dependencias necesarias' },
+      { id: 16, titulo: 'Configurar TypeScript y ESLint' },
+      { id: 17, titulo: 'Implementar la estructura de carpetas' },
+      { id: 18, titulo: 'Crear el módulo de tareas' },
+      { id: 19, titulo: 'Definir el modelo de datos de tareas' },
+      { id: 20, titulo: 'Implementar el servicio de tareas' },
+      { id: 21, titulo: 'Crear el controlador de tareas' },
+      { id: 22, titulo: 'Instalar dependencias del proyecto como .nicolocaina.' },
     ];
   }
 }
