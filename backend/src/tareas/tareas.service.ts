@@ -7,6 +7,8 @@ export class TareasService {
     return [
       { id: 1, titulo: 'Leer la guía de la clase 2' },
       { id: 2, titulo: 'Preparar el entorno de desarrollo' },
+      { id: 3, titulo: 'Ralizar tarea de la clase 2'},
+      { id: 4, titulo: 'Hola Buenas'},
     ];
   }
 }
