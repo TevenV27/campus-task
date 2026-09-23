@@ -1,0 +1,16 @@
+<section class="hoja">
+  <header class="cabecera">
+    <p class="marca">Curso</p>
+    <h1>CampusTasks</h1>
+    <p class="subtitulo">Tareas del curso</p>
+  </header>
+
+  <ul>
+    @for (tarea of tareas(); track tarea.id) {
+      <li>
+        <span class="numero">{{ tarea.id }}</span>
+        <span class="titulo">{{ tarea.titulo }}</span>
+      </li>
+    }
+  </ul>
+</section>
