@@ -8,6 +8,7 @@ export class TareasService {
       { id: 1, titulo: 'Leer la guía de la clase 2' },
       { id: 2, titulo: 'Preparar el entorno de desarrollo' },
       { id: 3, titulo: 'Configurar el proyecto' },
+      { id: 4, titulo: 'Implementar la funcionalidad principal' },
     ];
   }
 }
