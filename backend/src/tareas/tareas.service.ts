@@ -7,8 +7,7 @@ export class TareasService {
     return [
       { id: 1, titulo: 'Leer la guía de la clase 2' },
       { id: 2, titulo: 'Preparar el entorno de desarrollo' },
-      { id: 3, titulo: 'Instalar dependencias del proyecto como .nicolocaina.' },
-      { id: 3, titulo: 'Realizar una práctica corta de acercamiento' }
+      { id: 3, titulo: 'Realizar una práctica corta de acercamiento' },
       { id: 4, titulo: 'Crear el proyecto de NestJS' },
       { id: 5, titulo: 'Instalar dependencias necesarias' },
       { id: 6, titulo: 'Configurar TypeScript y ESLint' },
@@ -17,6 +16,7 @@ export class TareasService {
       { id: 9, titulo: 'Definir el modelo de datos de tareas' },
       { id: 10, titulo: 'Implementar el servicio de tareas' },
       { id: 11, titulo: 'Crear el controlador de tareas' },
+      { id: 12, titulo: 'Instalar dependencias del proyecto como .nicolocaina.' },
     ];
   }
 }
