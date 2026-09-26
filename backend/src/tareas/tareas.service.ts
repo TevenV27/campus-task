@@ -27,6 +27,9 @@ export class TareasService {
       { id: 20, titulo: 'Implementar el servicio de tareas' },
       { id: 21, titulo: 'Crear el controlador de tareas' },
       { id: 22, titulo: 'Instalar dependencias del proyecto como .nicolocaina.' },
+      { id: 23, titulo: 'Instalar dependencias' },
+      { id: 24, titulo: 'Configurar el proyecto' },
+      { id: 25, titulo: 'Escribir código de ejemplo' },
     ];
   }
 }
