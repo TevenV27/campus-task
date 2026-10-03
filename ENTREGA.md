@@ -83,7 +83,7 @@ Ambas consultas son parametrizadas con $1 y $2, igual que crear. No se concatena
 
 *Controlador.* Agregamos en TareasController las rutas PATCH /tareas/:id y DELETE /tareas/:id.
 
-- *Conversión del :id:* el :id llega como texto en la URL. Usamos ParseIntPipe en @Param('id', ParseIntPipe), que lo convierte a number antes de llamar al servicio y responde 400 automáticamente si no es un número válido. Elegimos esta opción porque es la forma que ofrece Nest para esta conversión y evita escribir la validación a mano.
+- *Conversión del id:* el :id llega como texto en la URL. Usamos ParseIntPipe en @Param('id', ParseIntPipe), que lo convierte a number antes de llamar al servicio y responde 400 automáticamente si no es un número válido. Elegimos esta opción porque es la forma que ofrece Nest para esta conversión y evita escribir la validación a mano.
 - *Detección del 404:* como las consultas usan RETURNING, si el id no existe la consulta devuelve rows vacío y el servicio devuelve undefined. El controlador revisa ese valor y, si no hay tarea, lanza NotFoundException, que Nest responde como 404 Not Found. Elegimos esta opción porque no necesita una consulta adicional para saber si la tarea existe.
 - *Código de estado 200:* Nest responde 200 por defecto en PATCH y DELETE, que es el código que pide el contrato, por lo que no hizo falta configurarlo.
 
