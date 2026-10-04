@@ -22,4 +22,26 @@ export class TareasComponent implements OnInit {
       this.tareas.update((tareas) => [...tareas, tarea]);
     });
   }
+  editar(tarea: Tarea) {
+    const nuevoTitulo = window.prompt('Nuevo título:', tarea.titulo);
+
+    if (!nuevoTitulo || nuevoTitulo.trim() === '') {
+      return;
+    }
+
+    this.tareasService.actualizar(tarea.id, nuevoTitulo.trim()).subscribe((tareaActualizada) => {
+      this.tareas.update((tareas) =>
+        tareas.map((t) =>
+          t.id === tareaActualizada.id ? tareaActualizada : t
+        )
+      );
+    });
+  }
+  eliminar(tarea: Tarea) {
+    this.tareasService.eliminar(tarea.id).subscribe((tareaEliminada) => {
+      this.tareas.update((tareas) =>
+        tareas.filter((t) => t.id !== tareaEliminada.id)
+      );
+    });
+  }
 }

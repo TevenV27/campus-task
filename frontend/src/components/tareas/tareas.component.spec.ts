@@ -13,7 +13,7 @@ describe('TareasComponent', () => {
   ];
 
   beforeEach(async () => {
-    tareasService = jasmine.createSpyObj('TareasService', ['listar', 'crear']);
+    tareasService = jasmine.createSpyObj('TareasService', ['listar', 'crear', 'actualizar', 'eliminar']);
     tareasService.listar.and.returnValue(of(iniciales));
 
     await TestBed.configureTestingModule({
@@ -56,4 +56,53 @@ describe('TareasComponent', () => {
       'Preparar el entorno',
     ]);
   });
+
+  it('edita una tarea al hacer clic en Editar', () => {
+    spyOn(window, 'prompt').and.returnValue('Tarea actualizada');
+    tareasService.actualizar.and.returnValue(
+      of({ id: 1, titulo: 'Tarea actualizada' }),
+    );
+
+    const elemento: HTMLElement = fixture.nativeElement;
+    const botonEditar = Array.from(
+      elemento.querySelectorAll('button'),
+    ).find((boton) => boton.textContent?.trim() === 'Editar');
+
+    expect(botonEditar).not.toBeUndefined();
+    botonEditar!.click();
+    fixture.detectChanges();
+    expect(window.prompt).toHaveBeenCalledWith(
+      'Nuevo título:',
+      'Leer la guía de la clase 2',
+    );
+    expect(tareasService.actualizar).toHaveBeenCalledWith(
+      1,
+      'Tarea actualizada',
+    );
+    expect(elemento.querySelector('.titulo')?.textContent).toContain(
+      'Tarea actualizada',
+    );
+  });
+
+  it('elimina una tarea al hacer clic en Eliminar', () => {
+    tareasService.eliminar.and.returnValue(
+      of({ id: 1, titulo: 'Leer la guía de la clase 2' }),
+    );
+
+    const elemento: HTMLElement = fixture.nativeElement;
+
+    const botonEliminar = Array.from(
+      elemento.querySelectorAll('button'),
+    ).find((boton) => boton.textContent?.trim() === 'Eliminar');
+
+    expect(botonEliminar).not.toBeUndefined();
+
+    botonEliminar!.click();
+    fixture.detectChanges();
+
+    expect(tareasService.eliminar).toHaveBeenCalledWith(1);
+
+    expect(elemento.querySelector('.titulo')).toBeNull();
+  });
+
 });

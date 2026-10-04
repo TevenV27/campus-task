@@ -5,10 +5,11 @@ import { Pool, QueryResult, QueryResultRow } from 'pg';
 export class DatabaseService implements OnModuleDestroy {
   private readonly pool = new Pool({
     host: process.env.DB_HOST,
-    port: Number(process.env.DB_PORT ?? 5432),
+    port: Number(process.env.DB_PORT ?? 5433),
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD || undefined,
     database: process.env.DB_NAME,
+    options: '-c client_encoding=UTF8',
   });
 
   query<T extends QueryResultRow>(
