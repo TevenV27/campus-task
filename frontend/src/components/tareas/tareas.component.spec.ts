@@ -10,10 +10,16 @@ describe('TareasComponent', () => {
 
   const iniciales: Tarea[] = [
     { id: 1, titulo: 'Leer la guía de la clase 2' },
+    { id: 2, titulo: 'Preparar el entorno de desarrollo' },
   ];
 
+  const boton = (texto: string): HTMLButtonElement =>
+    Array.from(
+      fixture.nativeElement.querySelectorAll('li button') as NodeListOf<HTMLButtonElement>,
+    ).find((b) => b.textContent?.trim() === texto)!;
+
   beforeEach(async () => {
-    tareasService = jasmine.createSpyObj('TareasService', ['listar', 'crear']);
+        tareasService = jasmine.createSpyObj('TareasService', ['listar', 'crear', 'actualizar', 'eliminar']);
     tareasService.listar.and.returnValue(of(iniciales));
 
     await TestBed.configureTestingModule({
@@ -53,7 +59,43 @@ describe('TareasComponent', () => {
     );
     expect(titulos).toEqual([
       'Leer la guía de la clase 2',
+      'Preparar el entorno de desarrollo',
       'Preparar el entorno',
     ]);
   });
+
+  it('edita el título al pulsar Editar y Guardar', () => {
+    tareasService.actualizar.and.returnValue(
+      of({ id: 1, titulo: 'Título nuevo' }),
+    );
+    const elemento: HTMLElement = fixture.nativeElement;
+
+    boton('Editar').click();
+    fixture.detectChanges();
+
+    const input = elemento.querySelector<HTMLInputElement>('input.edicion');
+    expect(input).not.toBeNull();
+    input!.value = 'Título nuevo';
+    boton('Guardar').click();
+    fixture.detectChanges();
+
+    expect(tareasService.actualizar).toHaveBeenCalledWith(1, 'Título nuevo');
+    expect(elemento.querySelector('.titulo')?.textContent).toContain(
+      'Título nuevo',
+    );
+  });
+
+  it('elimina la tarea al pulsar Eliminar y deja las demás', () => {
+    tareasService.eliminar.and.returnValue(of(iniciales[0]));
+    const elemento: HTMLElement = fixture.nativeElement;
+
+    boton('Eliminar').click();
+    fixture.detectChanges();
+
+    expect(tareasService.eliminar).toHaveBeenCalledWith(1);
+    const titulos = Array.from(elemento.querySelectorAll('.titulo')).map(
+      (nodo) => nodo.textContent,
+    );
+    expect(titulos).toEqual(['Preparar el entorno de desarrollo']);
+  });  
 });
