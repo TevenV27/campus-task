@@ -202,5 +202,5 @@ git commit -m "Entrega y evidencias de trabajo"
 
 El ``git status`` se realizo para verificar que el .env no se involucrara e igualmente que sea ignorado por el **.gitignore** de la raiz.
 
-Link de la rama: Pendiente
+Link de la rama: https://github.com/TevenV27/campus-task/tree/taller/actualizar-eliminar-tareas/gabrielbr-josemanuel
 
