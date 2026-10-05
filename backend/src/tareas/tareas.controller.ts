@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
 import { Tarea } from './tarea.model';
 import { TareasService } from './tareas.service';
 
@@ -14,5 +14,10 @@ export class TareasController {
   @Post()
   crear(@Body('titulo') titulo: string): Promise<Tarea> {
     return this.tareasService.crear(titulo);
+  }
+  
+    @Patch(':id')
+  actualizar(@Body('titulo') titulo: string,@Param('id', ParseIntPipe) id: number): Promise<Tarea> {
+    return this.tareasService.actualizar(id, titulo);
   }
 }
