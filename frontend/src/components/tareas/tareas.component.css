@@ -119,3 +119,22 @@ li:last-child {
     border-radius: 1rem;
   }
 }
+.titulo {
+  flex: 1;
+}
+
+.editar-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.acciones {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.error {
+  margin: 0.75rem 0;
+  color: #b3261e;
+  font-size: 0.95rem;
+}
