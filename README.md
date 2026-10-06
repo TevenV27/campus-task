@@ -1,6 +1,11 @@
 # CampusTasks
 Descripcion: lista de tareas.
 
+##Grupo de trabajo:
+
+-Rigoberto Ospina 
+-Miguel Sanclemente
+
 ## Requisitos
 
 - Node.js 24.x
