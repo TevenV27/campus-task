@@ -9,7 +9,7 @@ Fecha: 5 de Octubre, 2026
 Rama: taller/actualizar-eliminar-tareas/gabrielbr-josemanuel
 
 # //Puesta en marcha:
-## (Las capturas de pantalla se encuentran en la carpeta "evidencias-trabajo")
+## [(Las capturas de pantalla se encuentran en la carpeta "evidencias-trabajo")](https://github.com/TevenV27/campus-task/blob/taller/actualizar-eliminar-tareas/gabrielbr-josemanuel/evidencias-trabajo/evidencias-trabajo.pdf)
 - ### Node.js y npm:
 
 Debido a que ya se contaba con **Node.js** que fue instalado previo a la asignación del taller en la clase anterior, se verificaron las versiones tanto de npm como de Node respectivamente **(v24.21.0 y v11.19.0)**.
@@ -58,6 +58,13 @@ Para la comprobación del frontend se uso el comando ``npm start``, no obstante,
 - ### Pruebas:
 
 Las pruebas tanto del backend como el frontend se realizaron con el npm test en donde las suites **(service.spec, integration.spec y component.spec)** no dieron ningún error y todos los procesos se ejecutaron correctamente. En el caso del frontend, la ventana simulada de Karma se abrió sin problema alguno y las conexiones fueron un exito.
+# Lectura de los ejemplos
+Al revisar los archivos de prueba provistos (`tareas.service.spec.ts`, `tareas.integration.spec.ts` y `tareas.component.spec.ts`), entendimos que el proyecto separa la verificación por capas utilizando objetos simulados para no depender de la base de datos o de la red. En el backend, usamos un *mock* de `query` y en el frontend un *spy* del servicio HTTP.
+
+Para implementar las nuevas pruebas reutilizamos el patrón **"preparar, ejecutar, verificar"**:
+1. **Preparar:** Configuramos qué deben devolver los mocks o spies (ej. la consulta SQL simulada) y renderizamos el estado inicial.
+2. **Ejecutar:** Llamamos al método del servicio, enviamos la petición HTTP mediante Supertest, o simulamos un clic del usuario en la interfaz.
+3. **Verificar:** Comprobamos con aserciones que los mocks recibieron los parámetros exactos y que la respuesta o la pantalla muestran el resultado correcto.
 
 # Implementación
 
@@ -67,9 +74,9 @@ En el apartado de ``tareas.service.ts`` se implementaron los nuevos métodos sol
 Para las rutas en ``tareas.controller.ts`` lo que se busco es agregarlas de tal manera que se asemejen a las demás añadidas en el apartado. Lo cual dejo como resultado las siguientes dos rutas:
 
 ```
-PATCH/tareas/:id ---> si: 202, no: 404
+PATCH/tareas/:id ---> si: 200, no: 404
 
-DELETE/tareas/:id ---> si: 202, no: 404
+DELETE/tareas/:id ---> si: 200, no: 404
 ```
 
 En PATCH, si la tarea existe devuelve un **200** con la tarea actualizada. En DELETE, nuevamente devuelve un 200 con la tarea eliminada. Si la tarea no existe en ambos casos entonces arroja el error **404.**
@@ -198,9 +205,10 @@ git status
 git add ENTREGA.md evidencias-trabajo
 
 git commit -m "Entrega y evidencias de trabajo"
+
+git push origin "Nombre-rama"
 ```
 
 El ``git status`` se realizo para verificar que el .env no se involucrara e igualmente que sea ignorado por el **.gitignore** de la raiz.
 
 Link de la rama: https://github.com/TevenV27/campus-task/tree/taller/actualizar-eliminar-tareas/gabrielbr-josemanuel
-
