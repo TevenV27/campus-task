@@ -18,6 +18,16 @@ export class TareasService {
                   'INSERT INTO tareas (titulo) VALUES ($1) RETURNING id, titulo',
                   [titulo],
             )
+            return resultado.rows[0];  
+      }
+      async actualizar(id: number, titulo: string): Promise<Tarea> {
+            const resultado = await this.db.query<Tarea>(
+                  'UPDATE tareas SET titulo = $1 WHERE id = $2 RETURNING id, titulo',
+                  [titulo, id],
+            )
+            if (resultado.rows.length === 0) {
+                  throw new NotFoundException(`La tarea ${id} no existe`);
+            }
             return resultado.rows[0];
       }
 

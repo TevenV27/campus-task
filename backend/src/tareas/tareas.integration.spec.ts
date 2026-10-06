@@ -82,4 +82,30 @@ describe('Tareas HTTP', () => {
       [999],
     );
   });
-});
+
+  it('PATCH /tareas/1 responde la tarea actualizada', async () => {
+    query.mockResolvedValue({
+      rows: [{ id: 1, titulo: 'Titulo editado' }],
+    });
+
+    await request(app.getHttpServer())
+      .patch('/tareas/1')
+      .send({ titulo: 'Titulo editado' })
+      .expect(200)
+      .expect({ id: 1, titulo: 'Titulo editado' });
+
+    expect(query).toHaveBeenCalledWith(
+      'UPDATE tareas SET titulo = $1 WHERE id = $2 RETURNING id, titulo',
+      ['Titulo editado', 1],
+    );
+  });
+
+  it('PATCH /tareas/9999 responde 404 si la tarea no existe', async () => {
+    query.mockResolvedValue({ rows: [] });
+
+    await request(app.getHttpServer())
+      .patch('/tareas/9999')
+      .send({ titulo: 'x' })
+      .expect(404);
+  });
+}); 
