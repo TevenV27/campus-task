@@ -1,7 +1,7 @@
 # CampusTasks
 Descripcion: lista de tareas.
 
-##Grupo de trabajo:
+## Grupo de trabajo:
 
 -Rigoberto Ospina 2459734
 -Miguel Sanclemente 2459488
