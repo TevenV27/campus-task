@@ -55,4 +55,78 @@ describe('Tareas HTTP', () => {
       ['Preparar el entorno'],
     );
   });
+
+  it('PATCH /tareas/:id actualiza una tarea existente', async () => {
+    const actualizada = {
+      id: 1,
+      titulo: 'Tarea actualizada',
+    };
+
+    query.mockResolvedValue({
+      rows: [actualizada],
+    });
+
+    await request(app.getHttpServer())
+      .patch('/tareas/1')
+      .send({ titulo: 'Tarea actualizada' })
+      .expect(200)
+      .expect(actualizada);
+
+    expect(query).toHaveBeenCalledWith(
+      'UPDATE tareas SET titulo = $1 WHERE id = $2 RETURNING id, titulo',
+      ['Tarea actualizada', 1],
+    );
+  });
+
+  it('PATCH /tareas/:id responde 404 si la tarea no existe', async () => {
+    query.mockResolvedValue({
+      rows: [],
+    });
+
+    await request(app.getHttpServer())
+      .patch('/tareas/999')
+      .send({ titulo: 'Tarea que no existe' })
+      .expect(404);
+
+    expect(query).toHaveBeenCalledWith(
+      'UPDATE tareas SET titulo = $1 WHERE id = $2 RETURNING id, titulo',
+      ['Tarea que no existe', 999],
+    );
+  });
+
+  it('DELETE /tareas/:id elimina una tarea existente', async () => {
+    const eliminada = {
+      id: 1,
+      titulo: 'Tarea eliminada',
+    };
+
+    query.mockResolvedValue({
+      rows: [eliminada],
+    });
+
+    await request(app.getHttpServer())
+      .delete('/tareas/1')
+      .expect(200)
+      .expect(eliminada);
+
+    expect(query).toHaveBeenCalledWith(
+      'DELETE FROM tareas WHERE id = $1 RETURNING id, titulo',
+      [1],
+    );
+  });
+
+  it('DELETE /tareas/:id responde 404 si la tarea no existe', async () => {
+    query.mockResolvedValue({
+      rows: [],
+    });
+
+    await request(app.getHttpServer())
+      .delete('/tareas/999')
+      .expect(404);
+
+    expect(query).toHaveBeenCalledWith(
+      'DELETE FROM tareas WHERE id = $1 RETURNING id, titulo',
+      [999],
+    );
+  });
 });

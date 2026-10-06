@@ -9,13 +9,34 @@
     <input type="text" #tituloInput />
     <button (click)="crear(tituloInput.value)">Agregar</button>
   </div>
+
   <ul>
     @for (tarea of tareas(); track tarea.id) {
 
     <li>
       <span class="numero">{{ tarea.id }}</span>
+
+      @if (tareaEditando() === tarea.id) {
+
+      <input
+        type="text"
+        [value]="tituloEditado()"
+        (input)="cambiarTitulo($any($event.target).value)"
+      />
+
+      <button (click)="guardar(tarea)">Guardar</button>
+
+      } @else {
+
       <span class="titulo">{{ tarea.titulo }}</span>
+
+      <button (click)="editar(tarea)">Editar</button>
+
+      }
+
+      <button (click)="eliminar(tarea)">Eliminar</button>
     </li>
+
     }
   </ul>
 </section>
