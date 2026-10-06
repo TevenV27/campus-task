@@ -3,17 +3,17 @@
 Universidad del Valle — Ingeniería de Sistemas
 Desarrollo de Software II
 
-> Los textos entre `[[ ... ]]` son marcadores: reemplácelos con sus datos y capturas antes de entregar. Borre esta nota al terminar.
-
 ---
 
 ## 1. Datos
 
 | Campo | Valor |
 |---|---|
-| Integrante 1 | Rigoberto Ospina -  2459488 |
-Integrante 2   | Miguel Sanclemente - 2459488|
+| Integrante 1 | Rigoberto Ospina — 2459488 |
+| Integrante 2 | Miguel Sanclemente — [[código de Miguel]] |
+| Fecha | 06/10/2026 |
 | Rama | `miguel-rigo` |
+| URL de la rama | https://github.com/TevenV27/campus-task/tree/miguel-rigo |
 
 ---
 
@@ -21,28 +21,26 @@ Integrante 2   | Miguel Sanclemente - 2459488|
 
 ### 2.1 Node.js
 
-Se usó Node.js 24.x.
+Se usó Node.js 24.x, como exige el proyecto.
 
 ```bash
 node -v
 npm -v
 ```
 
-[[Captura: salida de node -v (v24.x) y npm -v]]
+Resultado: Node `v24.16.0` y npm `11.13.0`.
+
+![Versiones de Node y npm](doc/img/01-node-version.png)
 
 ### 2.2 PostgreSQL
 
-[[Describa cómo instaló PostgreSQL (instalador, sistema operativo, versión) y cómo comprobó la conexión con psql.]]
+Se instaló PostgreSQL 18.0 en Windows con el instalador oficial. La conexión se comprobó con **SQL Shell (psql)**, usando el usuario `postgres`, el servidor `localhost` y el puerto 5432. Al conectar apareció el prompt `campus_tasks=#`, lo que confirma que el servicio está activo y que la base existe.
 
-```bash
-psql -U <usuario> -h 127.0.0.1 -p 5432 -d postgres
-```
-
-[[Captura: consola postgres=# funcionando]]
+![Conexión a PostgreSQL con psql](doc/img/02-sql-campus_tasks.png)
 
 ### 2.3 Base de datos, tabla y datos iniciales
 
-Dentro de `psql`:
+El repositorio no trae scripts SQL, así que la base se creó a mano. Dentro de `psql`:
 
 ```sql
 CREATE DATABASE campus_tasks;
@@ -53,9 +51,9 @@ INSERT INTO tareas (titulo) VALUES
  ('Preparar el entorno de desarrollo');
 ```
 
-Comprobación con `SELECT * FROM tareas;`, que debe mostrar las dos filas iniciales.
+Comprobación con `SELECT * FROM tareas;`, que muestra las dos filas iniciales.
 
-[[Captura: resultado del SELECT]]
+![SELECT de la tabla tareas](doc/img/03-sql-select.png)
 
 ### 2.4 Archivo `backend/.env`
 
@@ -69,6 +67,8 @@ DB_PASSWORD
 DB_NAME
 ```
 
+Al principio el backend falló con el error `no existe el rol «USUARIO»`: el archivo `.env` no estaba en la carpeta `backend`, así que el servidor no leyó la configuración y usó el nombre de usuario de Windows. Se creó el archivo en `backend/.env` y se reinició el servidor.
+
 El archivo está ignorado por el `.gitignore` de la raíz y no se subió a Git. Tampoco se subió la carpeta `.idea/` del IDE.
 
 ### 2.5 Backend
@@ -79,9 +79,9 @@ npm ci
 npm run start:dev
 ```
 
-Comprobación: `http://localhost:3000/tareas` devuelve las tareas iniciales en JSON.
+Comprobación: `http://localhost:3000/tareas` devuelve las tareas iniciales en JSON. En el arranque, Nest registra las cuatro rutas: `GET`, `POST`, `PATCH /tareas/:id` y `DELETE /tareas/:id`.
 
-[[Captura: navegador o curl en GET /tareas]]
+![GET /tareas en el navegador](doc/img/04-get-tareas.png)
 
 ### 2.6 Frontend
 
@@ -91,9 +91,9 @@ npm ci
 npm start
 ```
 
-Comprobación: en `http://localhost:4200` aparecen las tareas y se puede agregar una nueva. El frontend se mantiene en el puerto 4200 porque el backend solo habilita CORS para ese origen.
+Comprobación: en `http://localhost:4200` aparecen las tareas, cada una con los botones **Editar** y **Eliminar**. El frontend se mantiene en el puerto 4200 porque el backend solo habilita CORS para ese origen.
 
-[[Captura: la aplicación en el navegador]]
+![Aplicación en localhost:4200](doc/img/05-app-4200.png)
 
 ---
 
@@ -242,6 +242,7 @@ Se eligió recargar la lista porque un 404 significa que la lista local está de
 - Ni el frontend ni el backend validan que el título esté vacío.
 - `crear` en el frontend no maneja errores (el taller no lo pedía).
 - El mensaje de error solo se limpia al pulsar **Editar**.
+- No hay una prueba de componente para el caso de error del backend.
 
 ---
 
@@ -265,7 +266,7 @@ cd backend
 npm test
 ```
 
-[[Captura: resumen con Test Suites: 2 passed y todas las pruebas aprobadas]]
+![npm test en el backend](doc/img/06-npm-test-backend.png)
 
 ### 5.2 Pruebas nuevas del frontend
 
@@ -274,7 +275,7 @@ npm test
 | Edita una tarea al pulsar Editar y Guardar | Tras pulsar **Editar**, escribir un título y pulsar **Guardar**, `actualizar` se llamó con `(1, 'Guía leída')`, la pantalla muestra el título nuevo y la otra tarea no cambia |
 | Elimina una tarea al pulsar Eliminar | Tras pulsar **Eliminar**, `eliminar` se llamó con `1`, la tarea desaparece de la pantalla y la otra sigue visible |
 
-Las pruebas anteriores (listar y agregar) siguen pasando sin cambios en lo que verifican. El spy ahora incluye también `actualizar` y `eliminar`.
+Las pruebas anteriores (listar y agregar) siguen en el mismo archivo, sin cambios en lo que verifican. El spy ahora incluye también `actualizar` y `eliminar`.
 
 Resultado de `npm test` en `frontend`:
 
@@ -283,25 +284,49 @@ cd frontend
 npm test
 ```
 
-[[Captura: Karma con todas las pruebas aprobadas]]
+![npm test en el frontend](doc/img/07-npm-test-frontend.png)
 
-### 5.3 Pruebas manuales
+### 5.3 Pruebas manuales del backend con la base real
 
-**Backend con la base real** (curl o Postman):
+Se usó `curl.exe` desde PowerShell, con el cuerpo JSON en archivos temporales para evitar problemas con las comillas. Primero se creó una tarea de prueba (id 3), luego se editó y se eliminó, y por último se probaron ids que no existen:
 
-```bash
-curl -X PATCH http://localhost:3000/tareas/1 -H "Content-Type: application/json" -d '{"titulo":"Título nuevo"}'
-curl -X DELETE http://localhost:3000/tareas/2
-curl -X PATCH http://localhost:3000/tareas/999 -H "Content-Type: application/json" -d '{"titulo":"X"}'
-curl -X DELETE http://localhost:3000/tareas/999
+```powershell
+curl.exe -i -X POST http://localhost:3000/tareas -H "Content-Type: application/json" -d "@$env:TEMP\crear.json"
+curl.exe -i -X PATCH http://localhost:3000/tareas/3 -H "Content-Type: application/json" -d "@$env:TEMP\editar.json"
+curl.exe -i -X DELETE http://localhost:3000/tareas/3
+curl.exe -i -X PATCH http://localhost:3000/tareas/999 -H "Content-Type: application/json" -d "@$env:TEMP\editar.json"
+curl.exe -i -X DELETE http://localhost:3000/tareas/999
 ```
 
-[[Captura: respuestas 200 con la tarea afectada y 404 para el id inexistente]]
+| Petición | Respuesta |
+|---|---|
+| `POST /tareas` | `201 Created` — `{"id":3,"titulo":"Tarea de prueba"}` |
+| `PATCH /tareas/3` | `200 OK` — `{"id":3,"titulo":"Titulo editado"}` |
+| `DELETE /tareas/3` | `200 OK` — devuelve la tarea eliminada |
+| `PATCH /tareas/999` | `404 Not Found` — `La tarea 999 no existe` |
+| `DELETE /tareas/999` | `404 Not Found` — `La tarea 999 no existe` |
 
-**Frontend contra el backend real** (`http://localhost:4200`): se editó una tarea, se eliminó otra y se comprobó el cambio en `GET /tareas`.
+![Pruebas con curl: 201, 200 y 404](doc/img/08-curl-patch-delete-404.png)
 
-[[Captura: la interfaz antes y después de editar y eliminar]]
-[[Captura: GET /tareas mostrando el cambio]]
+### 5.4 Prueba manual del frontend contra el backend real
+
+En `http://localhost:4200` se probó el flujo completo y se comprobó el cambio con `GET /tareas`.
+
+Lista de tareas antes de las operaciones:
+
+![Interfaz antes](doc/img/09a-interfaz-antes.png)
+
+Tarea editada con **Editar** y **Guardar**:
+
+![Interfaz con la tarea editada](doc/img/09b-interfaz-editada.png)
+
+Tarea eliminada con **Eliminar**:
+
+![Interfaz con la tarea eliminada](doc/img/09c-interfaz-eliminada.png)
+
+`GET /tareas` después de los cambios:
+
+![GET /tareas después de editar y eliminar](doc/img/09d-get-tareas-despues.png)
 
 ---
 
@@ -314,16 +339,32 @@ git fetch origin
 git checkout miguel-rigo
 git status                  # se confirmó que .env y .idea/ no aparecen
 git add <archivos>
-git commit -m "[[Mensaje que explique la funcionalidad]]"
+git commit -m "Se agrega la edición y eliminación de tareas en backend y frontend con sus pruebas"
 git push -u origin miguel-rigo
 ```
 
-Salida de `git branch --show-current` y `git log --oneline -5`:
+Estado y últimos commits de la rama:
 
 ```
-[[Pegue aquí la salida]]
+PS> git status
+On branch miguel-rigo
+Your branch is up to date with 'origin/miguel-rigo'.
+
+nothing to commit, working tree clean
+
+PS> git branch --show-current
+miguel-rigo
+
+PS> git log --oneline -5
+82e514a (HEAD -> miguel-rigo, origin/miguel-rigo) Carpeta con evidencias
+b1c38db Documentacion sin capturas
+e2b076b Fix formatting of 'Grupo de trabajo' section
+9a979eb Add student IDs to team members in README
+7a24fc6 Add workgroup section to README
 ```
 
-URL de la rama o del commit: [[https://...]]
+Commit de la implementación: `b2a3225` — "Se agrega la edición y eliminación de tareas en backend y frontend con sus pruebas".
 
-[[Captura: git status limpio y git push]]
+URL del commit: https://github.com/TevenV27/campus-task/commit/b2a3225
+
+URL de la rama: https://github.com/TevenV27/campus-task/tree/miguel-rigo
