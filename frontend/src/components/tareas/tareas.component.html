@@ -10,22 +10,23 @@
     <button (click)="crear(tituloInput.value)">Agregar</button>
   </div>
 
+  @if (mensajeError) {
+    <p class="error">{{ mensajeError }}</p>
+  }
+
   <ul>
     @for (tarea of tareas(); track tarea.id) {
-
     <li>
       <span class="numero">{{ tarea.id }}</span>
 
       @if (tareaEditandoId === tarea.id) {
-        
           <input type="text" [(ngModel)]="tituloEditado"/>
           <button (click)="guardarEdicion()">Guardar</button>
 
         } @else {
-
           <span class="titulo">{{ tarea.titulo }}</span>
-          <button (click)="editar(tarea)"> Editar</button>
-          <button (click)="eliminar(tarea.id)"> Eliminar</button>
+          <button (click)="editar(tarea)">Editar</button>
+          <button (click)="eliminar(tarea.id)">Eliminar</button>
         }
     </li>
     }

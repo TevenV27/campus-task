@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { Tarea } from './tarea.model';
@@ -58,7 +59,6 @@ describe('TareasComponent', () => {
 
   it('edita una tarea y muestra el título actualizado', () => {
     const tareaActualizada: Tarea = {id: 1, titulo: 'Guía de la clase actualizada',};
-
     tareasService.actualizar.and.returnValue(of(tareaActualizada));
 
     const elemento: HTMLElement = fixture.nativeElement;
@@ -89,8 +89,7 @@ describe('TareasComponent', () => {
     fixture.detectChanges();
 
     expect(tareasService.actualizar).toHaveBeenCalledWith(
-      1,
-      'Guía de la clase actualizada',
+      1, 'Guía de la clase actualizada',
     );
 
     expect(elemento.querySelector('.titulo')?.textContent).toContain(
@@ -110,28 +109,89 @@ describe('TareasComponent', () => {
     fixture.detectChanges();
 
     expect(tareasService.eliminar).toHaveBeenCalledWith(1);
-    const titulos = Array.from(elemento.querySelectorAll('.titulo'),
-    ).map((nodo) => nodo.textContent?.trim());
+    const titulos = Array.from(elemento.querySelectorAll('.titulo'),).map(
+      (nodo) => nodo.textContent?.trim()
+    );
 
     expect(titulos).not.toContain('Leer la guía de la clase 2');
   });
 
-  it('no elimina la tarea si el backend responde 404', () => {
-    tareasService.eliminar.and.returnValue(throwError(() => ({ status: 404 })),);
+  it('si actualizar responde 404, avisa, sale de edición y recarga', () => {
+    tareasService.actualizar.and.returnValue(
+      throwError(() => new HttpErrorResponse({ status: 404 })),
+    );
+    tareasService.listar.calls.reset();
+
+    const elemento: HTMLElement = fixture.nativeElement;
+
+    const botonEditar = Array.from(elemento.querySelectorAll('button')).find(
+      (boton) => boton.textContent?.trim() === 'Editar',);
+    expect(botonEditar).toBeDefined();
+    botonEditar!.click();
+    fixture.detectChanges();
+
+    // se consulta de nuevo
+    const botonGuardar = Array.from(elemento.querySelectorAll('button')).find(
+      (boton) => boton.textContent?.trim() === 'Guardar',
+    );
+    expect(botonGuardar).toBeDefined();
+    botonGuardar!.click();
+    fixture.detectChanges();
+
+    expect(tareasService.actualizar).toHaveBeenCalledWith(
+      1,
+      'Leer la guía de la clase 2',
+    );
+    expect(tareasService.listar).toHaveBeenCalledTimes(1);
+    expect(elemento.querySelector('.error')?.textContent).toContain(
+      'La tarea ya no existe',
+    );
+    // solo queda el input de Agregar, salio del modo edicion
+    expect(elemento.querySelectorAll('input').length).toBe(1);
+  });
+
+  it('si eliminar responde 404, avisa y recarga la lista', () => {
+    tareasService.eliminar.and.returnValue(
+      throwError(() => new HttpErrorResponse({ status: 404 })),
+    );
+    tareasService.listar.calls.reset();
+
+    const elemento: HTMLElement = fixture.nativeElement;
+    const botonEliminar = Array.from(elemento.querySelectorAll('button')).find(
+      (boton) => boton.textContent?.trim() === 'Eliminar',
+    );
+
+    expect(botonEliminar).toBeDefined();
+    botonEliminar!.click();
+    fixture.detectChanges();
+
+    expect(tareasService.eliminar).toHaveBeenCalledWith(1);
+    expect(tareasService.listar).toHaveBeenCalledTimes(1);
+    expect(elemento.querySelector('.error')?.textContent).toContain(
+      'La tarea ya no existe',
+    );
+    expect(elemento.querySelectorAll('.titulo').length).toBe(1);
+  });
+
+  it('si eliminar falla con otro error, muestra mensaje genérico y no recarga', () => {
+    tareasService.eliminar.and.returnValue(
+      throwError(() => new HttpErrorResponse({ status: 500 })),
+    );
+    tareasService.listar.calls.reset();
 
     const elemento: HTMLElement = fixture.nativeElement;
     const botones = Array.from(elemento.querySelectorAll('button'),);
-
     const botonEliminar = botones.find((boton) => boton.textContent?.trim() === 'Eliminar',);
 
     expect(botonEliminar).toBeDefined();
     botonEliminar!.click();
     fixture.detectChanges();
-    expect(tareasService.eliminar).toHaveBeenCalledWith(1);
 
-    const titulos = Array.from(elemento.querySelectorAll('.titulo'),
-    ).map((nodo) => nodo.textContent?.trim());
-
-    expect(titulos).toContain('Leer la guía de la clase 2');
+    expect(tareasService.listar).not.toHaveBeenCalled();
+    expect(elemento.querySelector('.error')?.textContent).toContain(
+      'No se pudo completar',
+    );
+    expect(elemento.querySelectorAll('.titulo').length).toBe(1);
   });
+
 });

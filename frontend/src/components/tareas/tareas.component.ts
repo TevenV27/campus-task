@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Tarea } from './tarea.model';
@@ -15,6 +16,7 @@ export class TareasComponent implements OnInit {
   tareas = signal<Tarea[]>([]);
   tareaEditandoId: number | null = null;
   tituloEditado = '';
+  mensajeError = '';
 
   ngOnInit(): void {
     this.tareasService.listar().subscribe((tareas) => {
@@ -28,6 +30,7 @@ export class TareasComponent implements OnInit {
   }
 
   editar(tarea: Tarea) {
+    this.mensajeError = '';
     this.tareaEditandoId = tarea.id;
     this.tituloEditado = tarea.titulo;
   }
@@ -39,8 +42,8 @@ export class TareasComponent implements OnInit {
 
     this.tareasService
       .actualizar(this.tareaEditandoId, this.tituloEditado)
-      .subscribe((tareaActualizada) => {
-        this.tareas.update((tareas) =>
+      .subscribe({
+        next: (tareaActualizada) => {this.tareas.update((tareas) =>
           tareas.map((tarea) =>
             tarea.id === tareaActualizada.id ? tareaActualizada : tarea,
           ),
@@ -48,14 +51,33 @@ export class TareasComponent implements OnInit {
 
         this.tareaEditandoId = null;
         this.tituloEditado = '';
+        this.mensajeError = '';
+        },
+        error: (e: HttpErrorResponse) => this.manejarError(e),
       });
   }
 
+  private manejarError(e: HttpErrorResponse) {
+    if (e.status === 404) {
+      this.mensajeError = 'La tarea ya no existe.';
+      this.tareaEditandoId = null;
+      this.tituloEditado = '';
+      this.tareasService.listar().subscribe((tareas) => {
+      this.tareas.set(tareas);});
+    } else {
+      this.mensajeError = 'No se pudo completar la operación. Intenta de nuevo.';
+    }
+  }
+
   eliminar(id: number) {
-    this.tareasService.eliminar(id).subscribe(() => {
-      this.tareas.update((tareas) =>
-        tareas.filter((tarea) => tarea.id !== id),
-      );
+    this.tareasService.eliminar(id).subscribe({
+      next: () => {
+        this.tareas.update((tareas) =>
+          tareas.filter((tarea) => tarea.id !== id),
+        );
+        this.mensajeError = '';
+      },
+      error: (e: HttpErrorResponse) => this.manejarError(e),
     });
   }
 
