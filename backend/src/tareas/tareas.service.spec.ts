@@ -1,3 +1,4 @@
+import { NotFoundException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { DatabaseService } from '../database/database.service';
 import { TareasService } from './tareas.service';
@@ -37,6 +38,40 @@ describe('TareasService', () => {
     expect(query).toHaveBeenCalledWith(
       'INSERT INTO tareas (titulo) VALUES ($1) RETURNING id, titulo',
       ['Nueva tarea'],
+    );
+  });
+
+  it('elimina por id y devuelve la fila eliminada', async () => {
+    const eliminada = { id: 2, titulo: 'Preparar el entorno de desarrollo' };
+    query.mockResolvedValue({ rows: [eliminada] });
+
+    await expect(service.eliminar(2)).resolves.toEqual(eliminada);
+    expect(query).toHaveBeenCalledWith(
+      'DELETE FROM tareas WHERE id = $1 RETURNING id, titulo',
+      [2],
+    );
+  });
+
+  it('lanza NotFoundException al eliminar un id que no existe', async () => {
+    query.mockResolvedValue({ rows: [] });
+
+    await expect(service.eliminar(999)).rejects.toThrow(NotFoundException);
+    expect(query).toHaveBeenCalledWith(
+      'DELETE FROM tareas WHERE id = $1 RETURNING id, titulo',
+      [999],
+    );
+  });
+
+  it('actualiza el título y devuelve la fila actualizada', async () => {
+    const actualizada = { id: 1, titulo: 'Nuevo título' };
+    query.mockResolvedValue({ rows: [actualizada] });
+
+    await expect(service.actualizar(1, 'Nuevo título')).resolves.toEqual(
+      actualizada,
+    );
+    expect(query).toHaveBeenCalledWith(
+      'UPDATE tareas SET titulo = $1 WHERE id = $2 RETURNING id, titulo',
+      ['Nuevo título', 1],
     );
   });
 });

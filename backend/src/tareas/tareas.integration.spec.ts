@@ -55,4 +55,57 @@ describe('Tareas HTTP', () => {
       ['Preparar el entorno'],
     );
   });
-});
+
+  it('DELETE /tareas/:id responde la tarea eliminada', async () => {
+    query.mockResolvedValue({
+      rows: [{ id: 2, titulo: 'Preparar el entorno de desarrollo' }],
+    });
+
+    await request(app.getHttpServer())
+      .delete('/tareas/2')
+      .expect(200)
+      .expect({ id: 2, titulo: 'Preparar el entorno de desarrollo' });
+
+    expect(query).toHaveBeenCalledWith(
+      'DELETE FROM tareas WHERE id = $1 RETURNING id, titulo',
+      [2],
+    );
+  });
+
+  it('DELETE /tareas/:id responde 404 si la tarea no existe', async () => {
+    query.mockResolvedValue({ rows: [] });
+
+    await request(app.getHttpServer()).delete('/tareas/999').expect(404);
+
+    expect(query).toHaveBeenCalledWith(
+      'DELETE FROM tareas WHERE id = $1 RETURNING id, titulo',
+      [999],
+    );
+  });
+
+  it('PATCH /tareas/1 responde la tarea actualizada', async () => {
+    query.mockResolvedValue({
+      rows: [{ id: 1, titulo: 'Titulo editado' }],
+    });
+
+    await request(app.getHttpServer())
+      .patch('/tareas/1')
+      .send({ titulo: 'Titulo editado' })
+      .expect(200)
+      .expect({ id: 1, titulo: 'Titulo editado' });
+
+    expect(query).toHaveBeenCalledWith(
+      'UPDATE tareas SET titulo = $1 WHERE id = $2 RETURNING id, titulo',
+      ['Titulo editado', 1],
+    );
+  });
+
+  it('PATCH /tareas/9999 responde 404 si la tarea no existe', async () => {
+    query.mockResolvedValue({ rows: [] });
+
+    await request(app.getHttpServer())
+      .patch('/tareas/9999')
+      .send({ titulo: 'x' })
+      .expect(404);
+  });
+}); 
