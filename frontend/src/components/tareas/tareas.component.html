@@ -9,13 +9,23 @@
     <input type="text" #tituloInput />
     <button (click)="crear(tituloInput.value)">Agregar</button>
   </div>
+
   <ul>
     @for (tarea of tareas(); track tarea.id) {
 
     <li>
       <span class="numero">{{ tarea.id }}</span>
       <span class="titulo">{{ tarea.titulo }}</span>
+
+      <button (click)="actualizar(tarea.id)">
+        Editar
+      </button>
+
+      <button (click)="eliminar(tarea.id)">
+        Eliminar
+      </button>
     </li>
+
     }
   </ul>
 </section>
