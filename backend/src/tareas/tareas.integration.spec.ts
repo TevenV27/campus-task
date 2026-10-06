@@ -55,4 +55,31 @@ describe('Tareas HTTP', () => {
       ['Preparar el entorno'],
     );
   });
+
+  it('DELETE /tareas/:id responde la tarea eliminada', async () => {
+    query.mockResolvedValue({
+      rows: [{ id: 2, titulo: 'Preparar el entorno de desarrollo' }],
+    });
+
+    await request(app.getHttpServer())
+      .delete('/tareas/2')
+      .expect(200)
+      .expect({ id: 2, titulo: 'Preparar el entorno de desarrollo' });
+
+    expect(query).toHaveBeenCalledWith(
+      'DELETE FROM tareas WHERE id = $1 RETURNING id, titulo',
+      [2],
+    );
+  });
+
+  it('DELETE /tareas/:id responde 404 si la tarea no existe', async () => {
+    query.mockResolvedValue({ rows: [] });
+
+    await request(app.getHttpServer()).delete('/tareas/999').expect(404);
+
+    expect(query).toHaveBeenCalledWith(
+      'DELETE FROM tareas WHERE id = $1 RETURNING id, titulo',
+      [999],
+    );
+  });
 });

@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+} from '@nestjs/common';
 import { Tarea } from './tarea.model';
 import { TareasService } from './tareas.service';
 
@@ -14,5 +22,10 @@ export class TareasController {
   @Post()
   crear(@Body('titulo') titulo: string): Promise<Tarea> {
     return this.tareasService.crear(titulo);
+  }
+
+  @Delete(':id')
+  eliminar(@Param('id', ParseIntPipe) id: number): Promise<Tarea> {
+    return this.tareasService.eliminar(id);
   }
 }
