@@ -39,4 +39,33 @@ describe('TareasService', () => {
       ['Nueva tarea'],
     );
   });
+  it('actualiza una tarea y devuelve la fila actualizada', async () => {
+    const actualizada = {
+      id: 1,
+      titulo: 'Tarea actualizada',
+    };
+
+    query.mockResolvedValue({ rows: [actualizada] });
+
+    await expect(
+      service.actualizar(1, 'Tarea actualizada'),
+    ).resolves.toEqual(actualizada);
+
+    expect(query).toHaveBeenCalledWith(
+      'UPDATE tareas SET titulo = $1 WHERE id = $2 RETURNING id, titulo',
+      ['Tarea actualizada', 1],
+    );
+  });
+
+  it('elimina una tarea por id', async () => {
+    query.mockResolvedValue({ rows: [] });
+
+    await service.eliminar(1);
+
+    expect(query).toHaveBeenCalledWith(
+      'DELETE FROM tareas WHERE id = $1',
+      [1],
+    );
+  });
+
 });

@@ -55,4 +55,37 @@ describe('Tareas HTTP', () => {
       ['Preparar el entorno'],
     );
   });
+
+  it('PATCH /tareas/:id actualiza una tarea', async () => {
+    query.mockResolvedValue({
+      rows: [{ id: 1, titulo: 'Tarea actualizada' }],
+    });
+
+    await request(app.getHttpServer())
+      .patch('/tareas/1')
+      .send({ titulo: 'Tarea actualizada' })
+      .expect(200)
+      .expect({
+        id: 1,
+        titulo: 'Tarea actualizada',
+      });
+
+    expect(query).toHaveBeenCalledWith(
+      'UPDATE tareas SET titulo = $1 WHERE id = $2 RETURNING id, titulo',
+      ['Tarea actualizada', 1],
+    );
+  });
+
+  it('DELETE /tareas/:id elimina una tarea', async () => {
+    query.mockResolvedValue({ rows: [] });
+
+    await request(app.getHttpServer())
+      .delete('/tareas/1')
+      .expect(200);
+
+    expect(query).toHaveBeenCalledWith(
+      'DELETE FROM tareas WHERE id = $1',
+      [1],
+    );
+  });
 });
