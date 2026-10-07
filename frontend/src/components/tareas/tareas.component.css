@@ -119,3 +119,13 @@ li:last-child {
     border-radius: 1rem;
   }
 }
+
+.titulo,
+li input {
+  flex: 1;
+}
+
+.error {
+  color: #b3261e;
+  font-weight: 500;
+}
