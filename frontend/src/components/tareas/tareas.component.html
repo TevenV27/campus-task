@@ -14,8 +14,23 @@
 
     <li>
       <span class="numero">{{ tarea.id }}</span>
-      <span class="titulo">{{ tarea.titulo }}</span>
+
+      @if (editandoId() === tarea.id) {
+        <input
+          [value]="tituloEditado()"
+          (input)="tituloEditado.set($event.target.value)"
+        />
+        <button (click)="guardar(tarea.id)">Guardar</button>
+      }
+        @else {
+          <span class="titulo">{{ tarea.titulo }}</span>
+          <button (click)="editar(tarea)">Editar</button>
+        }
+        <button (click)="eliminar(tarea.id)">Eliminar</button>
     </li>
+    }
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
     }
   </ul>
 </section>
