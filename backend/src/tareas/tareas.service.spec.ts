@@ -39,4 +39,15 @@ describe('TareasService', () => {
       ['Nueva tarea'],
     );
   });
+  it('actualizar devuelve la fila actualizada y usa UPDATE parametrizado', async () => {
+    query.mockResolvedValue({ rows: [{ id: 1, titulo: 'editada'}]});
+    const resultado = await service.actualizar(1, 'editada');
+    expect(resultado).toEqual({ id: 1, titulo: 'editada'});
+    expect(query).toHaveBeenCalledWith(
+      'UPDATE tareas SET titulo = $1 WHERE id = $2 RETURNING id, titulo',
+      ['editada', 1],
+    );
+  });
+
+  
 });

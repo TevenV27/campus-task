@@ -55,4 +55,16 @@ describe('Tareas HTTP', () => {
       ['Preparar el entorno'],
     );
   });
+   it('PATCH /tareas/:id responde 200 con la tarea actualizada', async () => {
+    query.mockResolvedValue({ rows:[{id: 1, titulo: 'editada'}] });
+    const res = await request(app.getHttpServer())
+      .patch('/tareas/1')
+      .send({ titulo: 'editada' })
+      .expect(200);
+    expect(res.body).toEqual({ id: 1, titulo: 'editada' });
+    expect(query).toHaveBeenCalledWith(
+      'UPDATE tareas SET titulo = $1 WHERE id = $2 RETURNING id, titulo',
+      ['editada', 1],
+    );
+  });
 });
