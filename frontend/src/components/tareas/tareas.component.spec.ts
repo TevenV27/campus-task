@@ -194,4 +194,36 @@ describe('TareasComponent', () => {
     expect(elemento.querySelectorAll('.titulo').length).toBe(1);
   });
 
+  it('no crea la tarea si el título está vacío', () => {
+    const elemento: HTMLElement = fixture.nativeElement;
+    elemento.querySelector('button')!.click();
+    fixture.detectChanges();
+
+    expect(tareasService.crear).not.toHaveBeenCalled();
+    expect(elemento.querySelector('.error')?.textContent).toContain('vacío');
+  });
+
+  it('no guarda la edición si el título queda vacío', () => {
+    const elemento: HTMLElement = fixture.nativeElement;
+    const botonEditar = Array.from(elemento.querySelectorAll('button')).find(
+      (boton) => boton.textContent?.trim() === 'Editar',
+    );
+    botonEditar!.click();
+    fixture.detectChanges();
+
+    const inputEdicion = elemento.querySelectorAll('input')[1] as HTMLInputElement;
+    inputEdicion.value = '';
+    inputEdicion.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    const botonGuardar = Array.from(elemento.querySelectorAll('button')).find(
+      (boton) => boton.textContent?.trim() === 'Guardar',
+    );
+    botonGuardar!.click();
+    fixture.detectChanges();
+
+    expect(tareasService.actualizar).not.toHaveBeenCalled();
+    expect(elemento.querySelector('.error')?.textContent).toContain('vacío');
+  });
+
 });

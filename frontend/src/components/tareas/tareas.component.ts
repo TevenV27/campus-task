@@ -24,8 +24,13 @@ export class TareasComponent implements OnInit {
     });
   }
   crear(titulo: string) {
+    if (titulo.trim() === '') {
+      this.mensajeError = 'El título no puede estar vacío.';
+      return;
+    }
     this.tareasService.crear(titulo).subscribe((tarea) => {
       this.tareas.update((tareas) => [...tareas, tarea]);
+      this.mensajeError = '';
     });
   }
 
@@ -39,7 +44,10 @@ export class TareasComponent implements OnInit {
     if (this.tareaEditandoId === null) {
       return;
     }
-
+    if (this.tituloEditado.trim() === '') {
+      this.mensajeError = 'El título no puede estar vacío.';
+      return;
+    }
     this.tareasService
       .actualizar(this.tareaEditandoId, this.tituloEditado)
       .subscribe({
