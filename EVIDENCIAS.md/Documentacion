@@ -1,0 +1,116 @@
+MARIA CAMILA OSPINA LOPEZ - 2459565
+CARLOS JOSE PULGARIN REINA - 2459621
+
+Fecha: 6 de Octubre de 2026
+Nombre de la Rama: taller/actualizar-eliminar-tareas-Carlos-Camila
+
+--PUESTA EN MARCHA
+
+- PostgreSQL, base de datos y tabla
+
+Instalamos PostgreSQL 18 con el instalador de Windows y usamos el usuario postgres que crea la instalación. 
+Administramos el servidor con pgAdmin 4.
+La base de datos se creo desde psql tal cual indicaba el documento, no fue tarea dificil
+
+imagen 01
+
+- archivo .env
+
+creamos backend/.env con estas 5 variables como indicaba el documento
+DB_HOST=127.0.0.1 
+DB_PORT=5432 
+DB_USER=postgres 
+DB_PASSWORD=**************
+DB_NAME=campus_tasks 
+
+el .gitignore hace que no se muestre el .env
+
+- backend y frontend
+
+cd backend
+npm ci
+npm run start:dev
+
+Comprobación: http://localhost:3000/tareas devuelve el JSON con las dos tareas iniciales
+imagen 02
+
+cd frontend
+npm ci
+npm start
+
+Comprobación: http://localhost:4200 muestra las dos tareas y permite agregar una nueva
+imagen 03
+
+- Que entendimos
+
+tareas.service.ts:
+pruebas unitarias, cada prueba unitaria es una función que se encarga de probar una parte del código, en este caso el servicio de tareas.
+Se utiliza para asegurarse de que el servicio funciona correctamente y devuelve los resultados esperados.
+
+tareas.integration.spec.ts:
+pruebas de integración, se encargan de probar la interacción entre diferentes partes del sistema, en este caso el servicio de tareas y la base de datos.
+Se utiliza para asegurarse de que el servicio funciona correctamente y devuelve los resultados esperados cuando se interactúa con la base de datos.
+
+tareas.component.spec.ts:
+pruebas de componentes, se encargan de probar la interacción entre el componente de tareas y el servicio de tareas.
+Se utiliza para asegurarse de que el componente funciona correctamente y muestra los resultados esperados cuando se interactúa con el servicio de tareas.
+
+Patron que reutilizamos:
+los tres tienen los mismos pasos, primero se crea un mock del servicio de tareas, luego se crea una instancia del componente de tareas y
+finalmente se llama a la función que se quiere probar y se comprueba el resultado.
+
+Implementación:
+backend:
+tareas.service.ts:
+se agregaron dos funciones nuevas, actualizar y eliminar, que permiten modificar y eliminar tareas respectivamente.
+
+tareas.controller.ts:
+se agregaron dos rutas nuevas, patch y delete, que permiten modificar y eliminar tareas respectivamente.
+
+imagen 04
+
+frontend:
+tareas.service.ts:
+se agregaron dos funciones nuevas, actualizar y eliminar, que permiten modificar y eliminar tareas respectivamente.
+
+tareas.component.ts:
+se agregaron dos funciones nuevas, actualizarTarea y eliminarTarea, que permiten modificar y eliminar tareas respectivamente.
+Estas funciones llaman a las funciones del servicio de tareas y actualizan la lista de tareas en el componente.
+
+imagen 05
+
+- pruebas:
+backend:
+prueba unitaria: actualiza el titulo y devuelve la fila actiualizada, elimina la fila y devuelve la fila eliminada.
+prueba de integración: elimina la tarea y comprueba que ya no existe en la base de datos, actualiza el titulo y comprueba que se ha actualizado en la base de datos.
+
+imagen 06
+
+frontend:
+prueba nueva: 
+-actualiza el título al pulsar Editar y Guardar
+-quita la tarea de la lista al pulsar Eliminar
+
+imagen 07
+
+-GIT
+Comandos usados:
+git clone https://github.com/TevenV27/campus-task.git
+cd campus-task
+git checkout -b taller/actualizar-eliminar-tareas-Carlos-Camila
+
+git status
+git add backend/src frontend/src
+git commit -m "Agrega edición y eliminación de tareas en backend y frontend con sus pruebas"
+git push -u origin taller/actualizar-eliminar-tareas-Carlos-Camila
+
+git add ENTREGA.md evidencias
+git commit -m "Agrega el documento ENTREGA con las evidencias del taller"
+git push
+
+Antes de cada commit revisamos con git status que .env no apareciera en la lista. No hicimos commits en master
+
+imagen 08 y 09
+
+RESULTADO FINAL:
+imagen 10
