@@ -1,3 +1,3 @@
 export const environment = {
-  apiUrl: 'http://localhost:3000',
+  apiUrl: 'https://campus-task-0ohb.onrender.com',
 }
