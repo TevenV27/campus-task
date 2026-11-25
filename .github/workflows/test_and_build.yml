@@ -51,3 +51,18 @@ jobs:
       - run: npm run lint
       - run: npm test -- --watch=false --browsers=ChromeHeadless
       - run: npm run build
+  
+  deploy:
+    needs: [backend, frontend]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Desplegar backend en render
+        run: curl -fsS -X POST "$RENDER_DEPLOY_HOOK"
+        env:
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+
+      - name: Desplegar frontend en vercel
+        run: curl -fsS -X POST "$VERCEL_DEPLOY_HOOK"
+        env:
+          VERCEL_DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
